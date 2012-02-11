@@ -72,16 +72,40 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 350685103;
-			PBXWorkspaceStateSaveDate = 350685103;
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					608,
+					60,
+					20,
+					48.16259765625,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 350686314;
+			PBXWorkspaceStateSaveDate = 350686314;
 		};
 		perUserProjectItems = {
-			821DDEC714E73EE100AA6EE2 /* PBXTextBookmark */ = 821DDEC714E73EE100AA6EE2 /* PBXTextBookmark */;
-			821DDEF614E73EE100AA6EE2 /* PBXTextBookmark */ = 821DDEF614E73EE100AA6EE2 /* PBXTextBookmark */;
-			821DDEF814E73EE100AA6EE2 /* PBXTextBookmark */ = 821DDEF814E73EE100AA6EE2 /* PBXTextBookmark */;
-			821DDEF914E73EE100AA6EE2 /* PBXTextBookmark */ = 821DDEF914E73EE100AA6EE2 /* PBXTextBookmark */;
-			821DDEFA14E73EE100AA6EE2 /* PBXTextBookmark */ = 821DDEFA14E73EE100AA6EE2 /* PBXTextBookmark */;
-			821DDF0114E73EE100AA6EE2 /* PBXTextBookmark */ = 821DDF0114E73EE100AA6EE2 /* PBXTextBookmark */;
+			821DDEC714E73EE100AA6EE2 = 821DDEC714E73EE100AA6EE2 /* PBXTextBookmark */;
+			821DDEF614E73EE100AA6EE2 = 821DDEF614E73EE100AA6EE2 /* PBXTextBookmark */;
+			821DDEF814E73EE100AA6EE2 = 821DDEF814E73EE100AA6EE2 /* PBXTextBookmark */;
+			821DDEF914E73EE100AA6EE2 = 821DDEF914E73EE100AA6EE2 /* PBXTextBookmark */;
+			821DDEFA14E73EE100AA6EE2 = 821DDEFA14E73EE100AA6EE2 /* PBXTextBookmark */;
+			821DDF0114E73EE100AA6EE2 = 821DDF0114E73EE100AA6EE2 /* PBXTextBookmark */;
+			8276BCF714E70C9A0085E128 /* PBXTextBookmark */ = 8276BCF714E70C9A0085E128 /* PBXTextBookmark */;
+			8276BCF814E70C9A0085E128 /* PBXTextBookmark */ = 8276BCF814E70C9A0085E128 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 821DDEA314E73EAE00AA6EE2 /* Source Control */;
 		userBuildSettings = {
@@ -89,7 +113,7 @@
 	};
 	08FB7796FE84155DC02AAC07 /* main.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {826, 557}}";
+			sepNavIntBoundsRect = "{{0, 0}, {826, 552}}";
 			sepNavSelRange = "{142, 1}";
 			sepNavVisRange = "{0, 143}";
 			sepNavWindowFrame = "{{15, 297}, {1208, 876}}";
@@ -148,11 +172,18 @@
 	};
 	821DDEC814E73EE100AA6EE2 /* main.s */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.asm;
 		name = main.s;
 		path = "/Users/dm/projects/zhttpd/build/zhttpd.build/Debug/zhttpd.build/Objects-normal/i386/main.s";
 		sourceTree = "<absolute>";
 	};
 	821DDEE114E73EE100AA6EE2 /* README.TXT */ = {
+		isa = PBXFileReference;
+		fileEncoding = 4;
+		lastKnownFileType = text;
+		name = README.TXT;
+		path = /Users/dm/projects/zhttpd/src/README.TXT;
+		sourceTree = "<absolute>";
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1149, 748}}";
 			sepNavSelRange = "{50, 0}";
@@ -172,6 +203,7 @@
 	};
 	821DDEF714E73EE100AA6EE2 /* Annotations for revision BASE — README.TXT */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = text;
 		path = "Annotations for revision BASE — README.TXT";
 		sourceTree = "<group>";
 	};
@@ -206,6 +238,26 @@
 		vrLoc = 0;
 	};
 	821DDF0114E73EE100AA6EE2 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* main.cpp */;
+		name = "main.cpp: 7";
+		rLen = 1;
+		rLoc = 142;
+		rType = 0;
+		vrLen = 143;
+		vrLoc = 0;
+	};
+	8276BCF714E70C9A0085E128 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* main.cpp */;
+		name = "main.cpp: 7";
+		rLen = 1;
+		rLoc = 142;
+		rType = 0;
+		vrLen = 143;
+		vrLoc = 0;
+	};
+	8276BCF814E70C9A0085E128 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 08FB7796FE84155DC02AAC07 /* main.cpp */;
 		name = "main.cpp: 7";

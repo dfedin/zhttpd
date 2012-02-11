@@ -26,8 +26,8 @@
 
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		821DDEE114E73EE100AA6EE2 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.TXT; sourceTree = "<group>"; };
-		8DD76F6C0486A84900D96B5E /* zhttpd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = zhttpd; sourceTree = BUILT_PRODUCTS_DIR; };
+		8276BCFC14E70CBD0085E128 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.TXT; sourceTree = "<group>"; };
+		8DD76F6C0486A84900D96B5E /* zhttpd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = zhttpd; path = /Users/dm/projects/zhttpd/build/Debug/zhttpd; sourceTree = "<absolute>"; };
 		C6859E8B029090EE04C91782 /* zhttpd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = zhttpd.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -45,7 +45,8 @@
 		08FB7794FE84155DC02AAC07 /* zhttpd */ = {
 			isa = PBXGroup;
 			children = (
-				821DDEE014E73EE100AA6EE2 /* src */,
+				C6859E8C029090F304C91782 /* Documentation */,
+				08FB7795FE84155DC02AAC07 /* Source */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 			);
 			name = zhttpd;
@@ -57,34 +58,22 @@
 				08FB7796FE84155DC02AAC07 /* main.cpp */,
 			);
 			name = Source;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DD76F6C0486A84900D96B5E /* zhttpd */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		821DDEE014E73EE100AA6EE2 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				08FB7795FE84155DC02AAC07 /* Source */,
-				C6859E8C029090F304C91782 /* Documentation */,
-				821DDEE114E73EE100AA6EE2 /* README.TXT */,
-			);
-			path = src;
 			sourceTree = "<group>";
 		};
 		C6859E8C029090F304C91782 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
+				8276BCFC14E70CBD0085E128 /* README.TXT */,
 				C6859E8B029090EE04C91782 /* zhttpd.1 */,
 			);
 			name = Documentation;
-			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
