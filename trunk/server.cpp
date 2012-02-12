@@ -22,10 +22,14 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#if defined(__FreeBSD__)
+#include <sys/types.h>
+#endif
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
-#if defined(__APPLE__) && defined(__MACH__)
+#if (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+
 #include <sys/event.h>
 #include <sys/time.h>
 #endif
@@ -87,7 +91,7 @@ void TZHttp::Start()
 
 void TZHttp::ThreadFunc()
 {
-#if  defined(__APPLE__) && defined(__MACH__)
+#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
     printf("thread started!\n");
     int nconn = 0;
     struct sockaddr_in addr;
@@ -106,7 +110,7 @@ void TZHttp::ThreadFunc()
             	// It's the FD we ran listen() on, it must be an incomming connection
             	int socketfd =
 					accept(evlist[i].ident, (struct sockaddr *)&addr, &len);
-				//printf("got connection fron adderess %s:%d\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+				printf("got connection fron adderess %s:%d\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 				EV_SET(&chlist, socketfd, EVFILT_READ, EV_ADD, 0, 0, 0);
 				pos[i] = 0;
 				(void) kevent(kv, &chlist, 1, (struct kevent*)0, 0, (struct timespec*)0);
@@ -115,7 +119,7 @@ void TZHttp::ThreadFunc()
 			else if (evlist[i].flags & EV_EOF) {
             	// connection closed...call close(2)
             	nconn--;
-            	//printf("con closed \n");
+            	printf("con closed \n");
             	close(evlist[i].ident);
             	pos[i] = 0;
 			}
@@ -123,7 +127,7 @@ void TZHttp::ThreadFunc()
 				ssize_t readBytes = read(evlist[i].ident, buf[i] + pos[i], 1024 - pos[i]);
             	char sendbuf[1024];
             	buf[i][pos[i] + readBytes] = 0;
-            	//printf("read %ld bytes: %s", readBytes, buf[i] + pos[i]);
+            	printf("read %ld bytes: %s", readBytes, buf[i] + pos[i]);
             	pos[i] += readBytes;
             	if (memcmp(buf, "GET", 3))
             	{
@@ -136,13 +140,13 @@ void TZHttp::ThreadFunc()
                 	pos[i] = 0;
                 	write(evlist[i].ident, sendbuf, strlen(sendbuf));
                 	close(evlist[i].ident);
-                	//printf("con closed \n");
+                	printf("con closed \n");
                 	continue;
             	}
             	char* res = strnstr(buf[i], "\r\n\r\n", pos[i]);
             	if (res == 0)
                 	continue;
-                    	//printf("sending 200\n");
+                printf("sending 200\n");
             	sprintf(sendbuf, "HTTP/1.0 200 OK   \r\n"
                             	"Content-Type: text/html; charset=UTF-8\r\n"
                             	"Content-Length: 30\r\n"
@@ -152,7 +156,7 @@ void TZHttp::ThreadFunc()
             	write(evlist[i].ident, sendbuf, strlen(sendbuf));
                     	close(evlist[i].ident);
                     	pos[i] = 0;
-                    	//printf("con closed \n");
+                    	printf("con closed \n");
             	} else {
                     	printf("unhandeled kevent\n");
             	}
