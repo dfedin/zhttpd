@@ -1,7 +1,13 @@
-#include <iostream>
+#include <stdio.h>
+#include "server.h"
+
+using namespace ZH;
 
 int main (int argc, char * const argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+	
+    const char* docRoot = ".";
+    const int port = 8081;
+	TZHttp server(port, docRoot, 10);
+    printf("Starting server at port %d, docroot %s\n", port, docRoot);
+    server.Start();
 }
