@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		82FE6B6A14E7D6EF00C82F1F /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82FE6B6914E7D6EF00C82F1F /* server.cpp */; };
 		8DD76F650486A84900D96B5E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.cpp */; settings = {ATTRIBUTES = (); }; };
 		8DD76F6A0486A84900D96B5E /* zhttpd.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* zhttpd.1 */; };
 /* End PBXBuildFile section */
@@ -27,7 +28,9 @@
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		8276BCFC14E70CBD0085E128 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.TXT; sourceTree = "<group>"; };
-		8DD76F6C0486A84900D96B5E /* zhttpd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = zhttpd; path = /Users/dm/projects/zhttpd/build/Debug/zhttpd; sourceTree = "<absolute>"; };
+		82FE6B6214E7D6C800C82F1F /* zhttpd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = zhttpd; sourceTree = BUILT_PRODUCTS_DIR; };
+		82FE6B6814E7D6EF00C82F1F /* server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = server.h; sourceTree = "<group>"; };
+		82FE6B6914E7D6EF00C82F1F /* server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = server.cpp; sourceTree = "<group>"; };
 		C6859E8B029090EE04C91782 /* zhttpd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = zhttpd.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,6 +59,8 @@
 			isa = PBXGroup;
 			children = (
 				08FB7796FE84155DC02AAC07 /* main.cpp */,
+				82FE6B6814E7D6EF00C82F1F /* server.h */,
+				82FE6B6914E7D6EF00C82F1F /* server.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -63,6 +68,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				82FE6B6214E7D6C800C82F1F /* zhttpd */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,7 +100,7 @@
 			name = zhttpd;
 			productInstallPath = "$(HOME)/bin";
 			productName = zhttpd;
-			productReference = 8DD76F6C0486A84900D96B5E /* zhttpd */;
+			productReference = 82FE6B6214E7D6C800C82F1F /* zhttpd */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -102,6 +108,9 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = dm128;
+			};
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "zhttpd" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -127,6 +136,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F650486A84900D96B5E /* main.cpp in Sources */,
+				82FE6B6A14E7D6EF00C82F1F /* server.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,8 +176,12 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lboost_thread-mt";
 				PREBINDING = NO;
+				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				SDKROOT = macosx10.6;
 			};
 			name = Debug;
@@ -179,6 +193,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lboost_thread-mt";
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
 			};
