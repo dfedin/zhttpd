@@ -205,6 +205,9 @@ void TZHttp::ThreadFunc()
 
                     SendStatus(ident, 413, REQUEST_ENTRY_TOO_LARGE_413);
                     close(ident);
+#ifdef VERBOSE_DEBUG
+                    printf("th:%lu: con closed \n", pthread_self());
+#endif
                     continue;
                 }
                 buf[readBytes] = 0;
@@ -247,12 +250,15 @@ ssize_t TZHttp::ReadAll(int fd, char* buf, const size_t readMaxBytes)
         if (readBytes < 0) {
             if (errno != EAGAIN) {
                 perror("read");
-                exit(-1);
+                return -1;
             }
             // FIXME: active waiting here and no timeouts, don't want to write nginx from scratch rigth now
             // continue reading later
             continue;
         }
+        // end of file?
+        if (readBytes == 0)
+            return -1;
         buf[pos + readBytes] = 0;
         if (strstr(buf, "\r\n\r\n") != 0)
             return (pos + readBytes);
