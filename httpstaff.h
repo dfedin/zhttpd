@@ -1,5 +1,5 @@
 /*
- *  server.h
+ *  httpstaff.h
  *  zhttpd
  *
  *  Created by dm on 12.02.12.
@@ -21,30 +21,37 @@
  *
  */
 #pragma once
-#include <string>
-#include <boost/thread/thread.hpp>
+// 400th
+extern const char* BAD_REQUEST_400;
+extern const char* REQUEST_ENTRY_TOO_LARGE_413;
+extern const char* URL_TOO_LONG_414;
+// 500th
+extern const char* INTERNAL_SERVER_ERROR_500;
+extern const char* NOT_SUPPORTED_501;
+
+
 
 namespace ZH {
-
-class THttpRequest;
-
-class TZHttp
+enum EMethod
 {
-private:
-    int ThreadNumber;
-    int Port;
-    std::string DocumentRoot;
-    void ThreadFunc();
-    boost::thread_group Threads;
-    int Kqueue;
-    int ListenSocket;
-
-    ssize_t ReadAll(int fd, char* buf, const size_t readMaxBytes);
-    void SendStatus(int fd, int status, const char* statusString);
-    void SendResponse(int fd, THttpRequest& req);
-public:
-    TZHttp(int port, const char* documentRoot, int threads = 10);
-    void Start();
+    GET,
+    HEAD,
+    UNSUPPORTED
 };
+class THttpRequest
+{
+    public:
+    char* Req;
+    int Status;
+    const char* StatusString;
+    EMethod Method;
+};
+
+class THTTPUtils
+{
+    public:
+    static bool GetHttpReq(THttpRequest& pRes, const char *buf, size_t bufSize);
+};
+
 
 }

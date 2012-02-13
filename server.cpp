@@ -38,12 +38,11 @@
 #include <fcntl.h>
 #endif
 
+#include "params.h"
+#include "httpstaff.h"
+
 #include "server.h"
 
-#define LISTEN_QUEUE 10
-#define MAX_REQ_LEN 4096
-
-//#define VERBOSE_DEBUG
 
 namespace ZH {
 
@@ -158,7 +157,11 @@ void TZHttp::ThreadFunc()
                     exit(-1);
                 }
 #ifdef VERBOSE_DEBUG
-                printf("th:%d: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa_r(addr.sin_addr, ntoa_buf, MAX_REQ_LEN), ntohs(addr.sin_port));
+#if !defined(__linux__)
+                printf("th:%lu: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa_r(addr.sin_addr, ntoa_buf, MAX_REQ_LEN), ntohs(addr.sin_port));
+#else
+                printf("th:%lu: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+#endif
 #endif
 #if (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
                 EV_SET(&chlist, socketfd, EVFILT_READ, EV_ADD|EV_CLEAR, 0, 0, 0);
@@ -187,7 +190,7 @@ void TZHttp::ThreadFunc()
                 // connection closed...call close(2)
                 nconn--;
 #ifdef VERBOSE_DEBUG
-                printf("th:%d: con closed \n", pthread_self());
+                printf("th:%lu: con closed \n", pthread_self());
 #endif
                 close(ident);
             }
@@ -198,62 +201,34 @@ void TZHttp::ThreadFunc()
             else {
 #endif
                 char buf[MAX_REQ_LEN];
-                char sendbuf[1024];
+
                 ssize_t readBytes = ReadAll(ident, buf, MAX_REQ_LEN);
-                if (readBytes == -1) {   
-#ifdef VERBOSE_DEBUG
-                    printf("th:%d: sending 413\n", pthread_self());
-#endif
-                    sprintf(sendbuf, "HTTP/1.0 413 Request Entity Too Large\r\n"
-                                    "Content-Type: text/html; charset=UTF-8\r\n"
-                                    "Content-Length: 0\r\n"
-                                    "Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
-                                    "Server: zhttpd/0.1\r\n\r\n");
-                    write(ident, sendbuf, strlen(sendbuf));
+                if (readBytes < 0) {
+
+                    SendStatus(ident, 413, REQUEST_ENTRY_TOO_LARGE_413);
                     close(ident);
                     continue;
-                }   
+                }
                 buf[readBytes] = 0;
 #ifdef VERBOSE_DEBUG
-                printf("th:%d: read %d bytes: %s", pthread_self(), readBytes, buf);
+                printf("th:%lu: read %ld bytes: %s", pthread_self(), readBytes, buf);
 #endif
-                if (memcmp(buf, "GET", 3)) {
-#ifdef VERBOSE_DEBUG
-                    printf("th:%d: sending 400\n", pthread_self());
-#endif
-                    sprintf(sendbuf, "HTTP/1.0 400 Bad Request\r\n"
-                                    "Content-Type: text/html; charset=UTF-8\r\n"
-                                    "Content-Length: 0\r\n"
-                                    "Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
-                                    "Server: zhttpd/0.1\r\n\r\n");
-                    write(ident, sendbuf, strlen(sendbuf));
+                THttpRequest req;
+                if (!THTTPUtils::GetHttpReq(req, buf, readBytes)) {
+                    SendStatus(ident, req.Status, req.StatusString);
                     close(ident);
 #ifdef VERBOSE_DEBUG
-                    printf("th:%d: con closed \n", pthread_self());
+                    printf("th:%lu: con closed \n", pthread_self());
 #endif
                     continue;
                 }
-#if !defined(__linux__)
-                char* res = strnstr(buf, "\r\n\r\n", readBytes);
-#else
-                char* res = strstr(buf, "\r\n\r\n");
-#endif
-                if (res == 0)
-                    continue;
 #ifdef VERBOSE_DEBUG
-                printf("th:%d: sending 200\n", pthread_self());
+                printf("th:%lu: req uri %s\n", pthread_self(), req.Req);
 #endif
-                sprintf(sendbuf, "HTTP/1.0 200 OK   \r\n"
-                                "Content-Type: text/html; charset=UTF-8\r\n"
-                                "Content-Length: 30\r\n"
-                                "Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
-                                "Server: zhttpd/0.1\r\n\r\n"
-                                "<html><H1>ZHTTP!!1</H1></html>");
-                ssize_t sizeWritten = write(ident, sendbuf, strlen(sendbuf));
+                SendResponse(ident, req);
                 close(ident);
 #ifdef VERBOSE_DEBUG
-                printf("th:%d: has to send %d bytes, sent %d\n", pthread_self(), strlen(sendbuf), sizeWritten);
-                printf("th:%d: con closed \n", pthread_self());
+                printf("th:%lu: con closed \n", pthread_self());
 #endif
             }
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
@@ -276,10 +251,47 @@ ssize_t TZHttp::ReadAll(int fd, char* buf, const size_t readMaxBytes)
                 perror("read");
                 exit(-1);
             }
-            return pos;
+            // continue reading later
+            continue;
         }
+        buf[pos + readBytes] = 0;
+        if (strstr(buf, "\r\n\r\n") != 0)
+            return (pos + readBytes);
         pos += readBytes;
     }
+}
+
+void TZHttp::SendStatus(int fd, int status, const char* statusString)
+{
+#ifdef VERBOSE_DEBUG
+    printf("th:%lu: sending %d\n", pthread_self(), status);
+#endif
+    char sendbuf[1024];
+    int chars = sprintf(sendbuf, "HTTP/1.0 %s\r\n"
+        "Content-Type: text/html;\r\n"
+        "Server: zhttpd/0.1\r\n\r\n", statusString);
+    write(fd, sendbuf, chars);
+}
+
+void TZHttp::SendResponse(int fd, THttpRequest& req)
+{
+#ifdef VERBOSE_DEBUG
+    printf("th:%lu: sending 200\n", pthread_self());
+#endif
+    // get content from somewhere by req
+    std::string content = "<html><H1>ZHTTP!!1</H1></html>";
+    char sendbuf[1024];
+    int chars = sprintf(sendbuf, "HTTP/1.0 200 OK   \r\n"
+        "Content-Type: text/html;\r\n"
+        "Content-Length: %lu\r\n"
+        "Server: zhttpd/0.1\r\n\r\n", content.length());
+    memcpy(sendbuf + chars, content.c_str(), content.length());
+    size_t sizeToSend = chars + content.length();
+    ssize_t sizeWritten = write(fd, sendbuf, sizeToSend);
+    free(req.Req);
+#ifdef VERBOSE_DEBUG
+    printf("th:%lu: has to send %d bytes, sent %d\n", pthread_self(), sizeToSend, sizeWritten);
+#endif
 }
 
 }
