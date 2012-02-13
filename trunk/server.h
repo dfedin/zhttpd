@@ -35,6 +35,7 @@ namespace ZH {
         boost::thread_group Threads;
         int ListenSocket;
         int Kqueue;
+        ssize_t ReadAll(int fs, char* buf, const size_t readMaxBytes);
 	public:
 		TZHttp(int port, const char* documentRoot, int threads = 10);
         void Start();
