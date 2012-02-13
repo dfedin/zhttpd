@@ -1,5 +1,5 @@
 /*
- *  server.h
+ *  params.h
  *  zhttpd
  *
  *  Created by dm on 12.02.12.
@@ -20,31 +20,9 @@
  *
  *
  */
-#pragma once
-#include <string>
-#include <boost/thread/thread.hpp>
 
-namespace ZH {
+#define LISTEN_QUEUE 10
+#define MAX_REQ_LEN 4096
+#define MAX_URI_LEN 2048 // U are IE or go away
 
-class THttpRequest;
-
-class TZHttp
-{
-private:
-    int ThreadNumber;
-    int Port;
-    std::string DocumentRoot;
-    void ThreadFunc();
-    boost::thread_group Threads;
-    int Kqueue;
-    int ListenSocket;
-
-    ssize_t ReadAll(int fd, char* buf, const size_t readMaxBytes);
-    void SendStatus(int fd, int status, const char* statusString);
-    void SendResponse(int fd, THttpRequest& req);
-public:
-    TZHttp(int port, const char* documentRoot, int threads = 10);
-    void Start();
-};
-
-}
+//#define VERBOSE_DEBUG

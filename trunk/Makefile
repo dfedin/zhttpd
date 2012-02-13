@@ -5,7 +5,7 @@ CXXFLAGS=$(CFLAGS)
 
 all: $(BINARY)
 
-zhttpd: main.o server.o
+zhttpd: main.o server.o httpstaff.cpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $? 
 
 clean:
