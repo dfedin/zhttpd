@@ -42,15 +42,16 @@
 
 #define LISTEN_QUEUE 10
 #define MAX_REQ_LEN 4096
+
 //#define VERBOSE_DEBUG
 
 namespace ZH {
 
 
 TZHttp::TZHttp(int port, const char* documentRoot, int threads)
-	: ThreadNumber(threads)
-	, Port(port)
-	, DocumentRoot(documentRoot)
+    : ThreadNumber(threads)
+    , Port(port)
+    , DocumentRoot(documentRoot)
 {
 }
 
@@ -71,6 +72,11 @@ void TZHttp::Start()
     int opt = 1;
     ioctl(ListenSocket, FIONBIO, &opt);
 #endif
+    int on = 1;
+    if (setsockopt(ListenSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)  {
+          perror("setsockopt(SO_REUSEADDR) failed");
+          exit(-1);
+    }
     memset(&my_addr, 0, sizeof(struct sockaddr_in));
     my_addr.sin_family = AF_INET;
     my_addr.sin_port = htons(Port);
@@ -85,7 +91,8 @@ void TZHttp::Start()
         perror("listen");
         exit(-1);
     }
-	for (int i = 0; i < ThreadNumber; ++i)
+
+    for (int i = 0; i < ThreadNumber; ++i)
         Threads.create_thread(boost::bind(&TZHttp::ThreadFunc, this));
     Threads.join_all();
 }
@@ -95,7 +102,7 @@ void TZHttp::ThreadFunc()
     printf("thread started!\n");
     int nconn = 0;
     struct sockaddr_in addr;
-    socklen_t len = sizeof(sockaddr_in);    
+    socklen_t len = sizeof(sockaddr_in);
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
     struct kevent chlist, evlist[LISTEN_QUEUE];
     int kv = kqueue();
@@ -111,15 +118,17 @@ void TZHttp::ThreadFunc()
         perror("epoll_ctl");
         exit(-1);
     }
-
-#endif    
-    char buf[MAX_REQ_LEN][LISTEN_QUEUE];
-    int pos[LISTEN_QUEUE];
+#endif
+    char ntoa_buf[MAX_REQ_LEN];
 
     for (;;) {
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
         int nev = kevent(kv, (const struct kevent *)0, 0, evlist, LISTEN_QUEUE, (const timespec *)0);
-#endif        
+        if (nev < 0) {
+            perror("kevent");
+            exit(-1);
+        }
+#endif
 #if defined (__linux__)
         int nev = epoll_wait(ev, evlist, LISTEN_QUEUE, -1);
 #endif
@@ -129,27 +138,35 @@ void TZHttp::ThreadFunc()
 #endif
 #if defined (__linux__)
             int ident = evlist[i].data.fd;
-#endif            
-        	if (ident  == ListenSocket) {
-            	// It's the FD we ran listen() on, it must be an incomming connection
-                len = sizeof(sockaddr_in);    
-            	int socketfd =
-#if !defined (__linux__)                
-					accept(ident, (struct sockaddr *)&addr, &len);
-#else                    
-					accept4(ident, (struct sockaddr *)&addr, &len, O_NONBLOCK);
-#endif               
+#endif
+            if (ident  == ListenSocket) {
+                // It's the FD we ran listen() on, it must be an incomming connection
+                len = sizeof(sockaddr_in);
+                memset(&addr, 0, sizeof(struct sockaddr_in));
+
+                int socketfd =
+#if !defined (__linux__)
+                    accept(ident, (struct sockaddr *)&addr, &len);
+#else
+                    accept4(ident, (struct sockaddr *)&addr, &len, O_NONBLOCK);
+#endif
                 if (socketfd < 0) {
+                    // someone alreadu handle this
+                    if (errno == EAGAIN)
+                        continue;
                     perror("accept");
                     exit(-1);
                 }
 #ifdef VERBOSE_DEBUG
-				printf("got connection from adderess %s:%d\n", inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
-#endif                
-#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
-				EV_SET(&chlist, socketfd, EVFILT_READ, EV_ADD, 0, 0, 0);
-				(void) kevent(kv, &chlist, 1, (struct kevent*)0, 0, (struct timespec*)0);
-#endif                
+                printf("th:%d: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa_r(addr.sin_addr, ntoa_buf, MAX_REQ_LEN), ntohs(addr.sin_port));
+#endif
+#if (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+                EV_SET(&chlist, socketfd, EVFILT_READ, EV_ADD|EV_CLEAR, 0, 0, 0);
+                if (kevent(kv, &chlist, 1, (struct kevent*)0, 0, (struct timespec*)0) < 0) {
+                    perror("kevent");
+                    exit(-1);
+                }
+#endif
 #if defined (__linux__)
                 chlist.events = EPOLLIN | EPOLLET;
                 chlist.data.fd = socketfd;
@@ -158,85 +175,111 @@ void TZHttp::ThreadFunc()
                     exit(-1);
                 }
 #endif
-				pos[i] = 0;
-				nconn++;
+                nconn++;
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
-        	} else if (evlist[i].flags & EV_EOF) {
+            } else if (evlist[i].flags & EV_EOF) {
 #endif
 #if defined (__linux__)
             } else if ((evlist[i].events & EPOLLERR) || (evlist[i].events & EPOLLHUP) ||
                 (!(evlist[i].events & EPOLLIN)))
             {
 #endif
-            	// connection closed...call close(2)
-            	nconn--;
+                // connection closed...call close(2)
+                nconn--;
 #ifdef VERBOSE_DEBUG
-            	printf("con closed \n");
-#endif                
-            	close(ident);
-            	pos[i] = 0;
-			}
+                printf("th:%d: con closed \n", pthread_self());
+#endif
+                close(ident);
+            }
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
-			else if (evlist[i].flags & EVFILT_READ) {
+            else if (evlist[i].flags & EVFILT_READ) {
 #endif
 #if defined(__linux__)
             else {
-#endif            
-				ssize_t readBytes = read(ident, buf[i] + pos[i], MAX_REQ_LEN - pos[i]);
-            	char sendbuf[1024];
-            	buf[i][pos[i] + readBytes] = 0;
+#endif
+                char buf[MAX_REQ_LEN];
+                char sendbuf[1024];
+                ssize_t readBytes = ReadAll(ident, buf, MAX_REQ_LEN);
+                if (readBytes == -1) {   
 #ifdef VERBOSE_DEBUG
-            	printf("read %d bytes: %s", readBytes, buf[i] + pos[i]);
-#endif                
-            	pos[i] += readBytes;
-            	if (memcmp(buf, "GET", 3))
-            	{
+                    printf("th:%d: sending 413\n", pthread_self());
+#endif
+                    sprintf(sendbuf, "HTTP/1.0 413 Request Entity Too Large\r\n"
+                                    "Content-Type: text/html; charset=UTF-8\r\n"
+                                    "Content-Length: 0\r\n"
+                                    "Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
+                                    "Server: zhttpd/0.1\r\n\r\n");
+                    write(ident, sendbuf, strlen(sendbuf));
+                    close(ident);
+                    continue;
+                }   
+                buf[readBytes] = 0;
 #ifdef VERBOSE_DEBUG
-                	printf("sending 400\n");
-#endif                    
-                	sprintf(sendbuf, "HTTP/1.0 400 Bad Request\r\n"
-                                	"Content-Type: text/html; charset=UTF-8\r\n"
-                                	"Content-Length: 0\r\n"
-                                	"Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
-                                	"Server: zhttpd/0.1\r\n\r\n");
-                	pos[i] = 0;
-                	write(ident, sendbuf, strlen(sendbuf));
-                	close(ident);
+                printf("th:%d: read %d bytes: %s", pthread_self(), readBytes, buf);
+#endif
+                if (memcmp(buf, "GET", 3)) {
 #ifdef VERBOSE_DEBUG
-                	printf("con closed \n");
-#endif                    
-                	continue;
-            	}
-#if !defined(__linux__)                    
-            	char* res = strnstr(buf[i], "\r\n\r\n", pos[i]);
-#else                
-            	char* res = strstr(buf[i], "\r\n\r\n");
-#endif          
-            	if (res == 0)
-                	continue;
+                    printf("th:%d: sending 400\n", pthread_self());
+#endif
+                    sprintf(sendbuf, "HTTP/1.0 400 Bad Request\r\n"
+                                    "Content-Type: text/html; charset=UTF-8\r\n"
+                                    "Content-Length: 0\r\n"
+                                    "Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
+                                    "Server: zhttpd/0.1\r\n\r\n");
+                    write(ident, sendbuf, strlen(sendbuf));
+                    close(ident);
 #ifdef VERBOSE_DEBUG
-                printf("sending 200\n");
-#endif                    
-            	sprintf(sendbuf, "HTTP/1.0 200 OK   \r\n"
-                            	"Content-Type: text/html; charset=UTF-8\r\n"
-                            	"Content-Length: 30\r\n"
-                            	"Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
-                            	"Server: zhttpd/0.1\r\n\r\n"
-                            	"<html><H1>ZHTTP!!1</H1></html>");
-            	write(ident, sendbuf, strlen(sendbuf));
+                    printf("th:%d: con closed \n", pthread_self());
+#endif
+                    continue;
+                }
+#if !defined(__linux__)
+                char* res = strnstr(buf, "\r\n\r\n", readBytes);
+#else
+                char* res = strstr(buf, "\r\n\r\n");
+#endif
+                if (res == 0)
+                    continue;
+#ifdef VERBOSE_DEBUG
+                printf("th:%d: sending 200\n", pthread_self());
+#endif
+                sprintf(sendbuf, "HTTP/1.0 200 OK   \r\n"
+                                "Content-Type: text/html; charset=UTF-8\r\n"
+                                "Content-Length: 30\r\n"
+                                "Date: Sun, 12 Feb 2012 16:12:58 GMT\r\n"
+                                "Server: zhttpd/0.1\r\n\r\n"
+                                "<html><H1>ZHTTP!!1</H1></html>");
+                ssize_t sizeWritten = write(ident, sendbuf, strlen(sendbuf));
                 close(ident);
-                pos[i] = 0;
 #ifdef VERBOSE_DEBUG
-                printf("con closed \n");
-#endif                        
-            } 
+                printf("th:%d: has to send %d bytes, sent %d\n", pthread_self(), strlen(sendbuf), sizeWritten);
+                printf("th:%d: con closed \n", pthread_self());
+#endif
+            }
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
             else {
-                    	printf("unhandeled kevent\n");
+                printf("unhandeled kevent %d socket %d\n", evlist[i].flags, evlist[i].ident);
             }
-#endif                
-		}
-	}
+#endif
+        }
+    }
+}
+ssize_t TZHttp::ReadAll(int fd, char* buf, const size_t readMaxBytes)
+{
+    size_t pos = 0;
+    while (true) {
+        if (readMaxBytes == pos)
+            return -1;
+        ssize_t readBytes = read(fd, buf + pos, readMaxBytes - pos);
+        if (readBytes < 0) {
+            if (errno != EAGAIN) {
+                perror("read");
+                exit(-1);
+            }
+            return pos;
+        }
+        pos += readBytes;
+    }
 }
 
 }
