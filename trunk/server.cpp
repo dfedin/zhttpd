@@ -43,9 +43,7 @@
 
 #include "server.h"
 
-
 namespace ZH {
-
 
 TZHttp::TZHttp(int port, const char* documentRoot, int threads)
     : ThreadNumber(threads)
@@ -251,6 +249,7 @@ ssize_t TZHttp::ReadAll(int fd, char* buf, const size_t readMaxBytes)
                 perror("read");
                 exit(-1);
             }
+            // FIXME: active waiting here and no timeouts, don't want to write nginx from scratch rigth now
             // continue reading later
             continue;
         }
@@ -287,7 +286,19 @@ void TZHttp::SendResponse(int fd, THttpRequest& req)
         "Server: zhttpd/0.1\r\n\r\n", content.length());
     memcpy(sendbuf + chars, content.c_str(), content.length());
     size_t sizeToSend = chars + content.length();
-    ssize_t sizeWritten = write(fd, sendbuf, sizeToSend);
+    size_t sizeWritten = 0;
+    while (sizeWritten != sizeToSend) {
+        ssize_t bytesSend = write(fd, sendbuf, sizeToSend);
+        if (bytesSend < 0) {
+            if (errno != EAGAIN) {
+                perror("write");
+                return;
+            }
+            continue;
+        }
+        sizeWritten += bytesSend;
+    }
+
     free(req.Req);
 #ifdef VERBOSE_DEBUG
     printf("th:%lu: has to send %d bytes, sent %d\n", pthread_self(), sizeToSend, sizeWritten);
