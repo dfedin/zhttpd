@@ -84,7 +84,7 @@ void TZHttp::Start()
         perror("bind");
         exit(-1);
     }
-    if (listen(ListenSocket, 10) < 0) {
+    if (listen(ListenSocket, LISTEN_BACKLOG) < 0) {
         perror("listen");
         exit(-1);
     }

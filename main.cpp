@@ -22,6 +22,7 @@
  */
 
 #include <stdio.h>
+#include "params.h"
 #include "server.h"
 
 using namespace ZH;
@@ -29,8 +30,8 @@ using namespace ZH;
 int main (int argc, char * const argv[]) {
 
     const char* docRoot = ".";
-    const int port = 8081;
-	TZHttp server(port, docRoot, 10);
+    const int port = HTTP_PORT;
+	TZHttp server(port, docRoot, THREAD_COUNT);
     printf("Starting server at port %d, docroot %s\n", port, docRoot);
     server.Start();
 }
