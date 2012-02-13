@@ -20,8 +20,11 @@
  *
  *
  */
-
-#define LISTEN_QUEUE 10
+#pragma once
+#define THREAD_COUNT 10
+#define HTTP_PORT 8081
+#define LISTEN_QUEUE 50
+#define LISTEN_BACKLOG 500
 #define MAX_REQ_LEN 4096
 #define MAX_URI_LEN 2048 // U are IE or go away
 
