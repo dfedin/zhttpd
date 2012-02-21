@@ -298,6 +298,7 @@ void TZHttp::SendResponse(int fd, THttpRequest& req)
         if (bytesSend < 0) {
             if (errno != EAGAIN) {
                 perror("write");
+                free(req.Req);
                 return;
             }
             continue;
