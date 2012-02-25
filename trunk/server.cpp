@@ -19,6 +19,8 @@
  *  Suite 330, Boston, MA 02111-1307, USA.
  *
  */
+#include "params.h"
+
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -28,7 +30,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
-#if (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if defined(__darwin__) || defined(__FreeBSD__)
 #include <sys/event.h>
 #include <sys/time.h>
 #endif
@@ -38,7 +40,7 @@
 #include <fcntl.h>
 #endif
 
-#include "params.h"
+
 #include "httpstaff.h"
 
 #include "server.h"
@@ -100,7 +102,7 @@ void TZHttp::ThreadFunc()
     int nconn = 0;
     struct sockaddr_in addr;
     socklen_t len = sizeof(sockaddr_in);
-#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if defined(__darwin__) || defined(__FreeBSD__)
     struct kevent chlist, evlist[LISTEN_QUEUE];
     int kv = kqueue();
     EV_SET(&chlist, ListenSocket, EVFILT_READ, EV_ADD, 0, 0, 0);
@@ -118,7 +120,7 @@ void TZHttp::ThreadFunc()
 #endif
 
     for (;;) {
-#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if defined(__darwin__) || defined(__FreeBSD__)
         int nev = kevent(kv, (const struct kevent *)0, 0, evlist, LISTEN_QUEUE, (const timespec *)0);
         if (nev < 0) {
             perror("kevent");
@@ -129,7 +131,7 @@ void TZHttp::ThreadFunc()
         int nev = epoll_wait(ev, evlist, LISTEN_QUEUE, -1);
 #endif
         for (int i = 0; i < nev; i++) {
-#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if  defined(__darwin__) || defined(__FreeBSD__)
             int ident = evlist[i].ident;
 #endif
 #if defined (__linux__)
@@ -160,7 +162,7 @@ void TZHttp::ThreadFunc()
                 printf("th:%lu: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 #endif
 #endif
-#if (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if defined(__darwin__) || defined(__FreeBSD__)
                 EV_SET(&chlist, socketfd, EVFILT_READ, EV_ADD|EV_CLEAR, 0, 0, 0);
                 if (kevent(kv, &chlist, 1, (struct kevent*)0, 0, (struct timespec*)0) < 0) {
                     perror("kevent");
@@ -176,7 +178,7 @@ void TZHttp::ThreadFunc()
                 }
 #endif
                 nconn++;
-#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if defined(__darwin__) || defined(__FreeBSD__)
             } else if (evlist[i].flags & EV_EOF) {
 #endif
 #if defined (__linux__)
@@ -191,7 +193,7 @@ void TZHttp::ThreadFunc()
 #endif
                 close(ident);
             }
-#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if defined(__darwin__) || defined(__FreeBSD__)
             else if (evlist[i].flags & EVFILT_READ) {
 #endif
 #if defined(__linux__)
@@ -231,7 +233,7 @@ void TZHttp::ThreadFunc()
                 printf("th:%lu: con closed \n", pthread_self());
 #endif
             }
-#if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
+#if defined(__darwin__) || defined(__FreeBSD__)
             else {
                 printf("unhandeled kevent %u socket %lu\n", evlist[i].flags, evlist[i].ident);
             }

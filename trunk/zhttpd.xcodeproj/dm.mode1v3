@@ -197,48 +197,7 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>82F53C1314E82B5D00D76577</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>main.cpp</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>82F53C1414E82B5D00D76577</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>main.cpp</string>
-						<key>_historyCapacity</key>
-						<integer>0</integer>
-						<key>bookmark</key>
-						<string>826842AF14F9883D00FD5687</string>
-						<key>history</key>
-						<array>
-							<string>82F53C2B14E82F1300D76577</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {1208, 779}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>282 219 1208 820 0 0 1600 1178 </string>
-			</dict>
-		</dict>
-	</array>
+	<array/>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>-1</integer>
@@ -270,8 +229,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -318,6 +275,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>8</integer>
 									<integer>4</integer>
 									<integer>0</integer>
 								</array>
@@ -355,6 +313,8 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -372,14 +332,16 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>826842AE14F9883D00FD5687</string>
+										<string>826842E514F98F0D00FD5687</string>
 										<key>history</key>
 										<array>
 											<string>8276BD0114E727AA0085E128</string>
-											<string>8276BD0214E727AA0085E128</string>
 											<string>82F53BAB14E8202500D76577</string>
-											<string>826842AC14F9883D00FD5687</string>
-											<string>826842AD14F9883D00FD5687</string>
+											<string>826842C114F98B0900FD5687</string>
+											<string>826842E214F98F0D00FD5687</string>
+											<string>826842E314F98F0D00FD5687</string>
+											<string>826842E414F98F0D00FD5687</string>
+											<string>826842D514F98ED000FD5687</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -391,14 +353,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {1392, 766}}</string>
+								<string>{{0, 0}, {1392, 794}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 146 1600 1032 0 0 1600 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>766pt</string>
+							<string>794pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -411,14 +373,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 771}, {1392, 220}}</string>
+								<string>{{0, 799}, {1392, 192}}</string>
 								<key>RubberWindowFrame</key>
 								<string>0 146 1600 1032 0 0 1600 1178 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>220pt</string>
+							<string>192pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -579,7 +541,6 @@
 	<array>
 		<string>1CD10A99069EF8BA00B06720</string>
 		<string>821DDEA114E73EAE00AA6EE2</string>
-		<string>82F53C1314E82B5D00D76577</string>
 		<string>/Users/dm/projects/zhttpd/zhttpd.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -599,8 +560,6 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -623,6 +582,8 @@
 							<string>705pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -675,7 +636,7 @@
 			<key>WindowToolGUID</key>
 			<string>821DDEA114E73EAE00AA6EE2</string>
 			<key>WindowToolIsVisible</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>

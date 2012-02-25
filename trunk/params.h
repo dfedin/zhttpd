@@ -28,4 +28,8 @@
 #define MAX_REQ_LEN 4096
 #define MAX_URI_LEN 2048 // U are IE or go away
 
+#if  (defined(__APPLE__) && defined(__MACH__))
+#define __darwin__ 
+#endif
+
 //#define VERBOSE_DEBUG
