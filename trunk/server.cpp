@@ -116,7 +116,6 @@ void TZHttp::ThreadFunc()
         exit(-1);
     }
 #endif
-    char ntoa_buf[MAX_REQ_LEN];
 
     for (;;) {
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
@@ -234,7 +233,7 @@ void TZHttp::ThreadFunc()
             }
 #if  (defined(__APPLE__) && defined(__MACH__)) || defined(__FreeBSD__)
             else {
-                printf("unhandeled kevent %d socket %d\n", evlist[i].flags, evlist[i].ident);
+                printf("unhandeled kevent %u socket %lu\n", evlist[i].flags, evlist[i].ident);
             }
 #endif
         }

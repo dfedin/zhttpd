@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8268429C14F987E500FD5687 /* httpstaff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8268429A14F987E500FD5687 /* httpstaff.cpp */; };
 		82FE6B6A14E7D6EF00C82F1F /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82FE6B6914E7D6EF00C82F1F /* server.cpp */; };
 		8DD76F650486A84900D96B5E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.cpp */; settings = {ATTRIBUTES = (); }; };
 		8DD76F6A0486A84900D96B5E /* zhttpd.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* zhttpd.1 */; };
@@ -27,6 +28,9 @@
 
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		8268429A14F987E500FD5687 /* httpstaff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = httpstaff.cpp; sourceTree = "<group>"; };
+		8268429B14F987E500FD5687 /* httpstaff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = httpstaff.h; sourceTree = "<group>"; };
+		8268429D14F987F200FD5687 /* params.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = params.h; sourceTree = "<group>"; };
 		8276BCFC14E70CBD0085E128 /* README.TXT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.TXT; sourceTree = "<group>"; };
 		82FE6B6214E7D6C800C82F1F /* zhttpd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = zhttpd; sourceTree = BUILT_PRODUCTS_DIR; };
 		82FE6B6814E7D6EF00C82F1F /* server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = server.h; sourceTree = "<group>"; };
@@ -58,6 +62,9 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				8268429D14F987F200FD5687 /* params.h */,
+				8268429A14F987E500FD5687 /* httpstaff.cpp */,
+				8268429B14F987E500FD5687 /* httpstaff.h */,
 				08FB7796FE84155DC02AAC07 /* main.cpp */,
 				82FE6B6814E7D6EF00C82F1F /* server.h */,
 				82FE6B6914E7D6EF00C82F1F /* server.cpp */,
@@ -137,6 +144,7 @@
 			files = (
 				8DD76F650486A84900D96B5E /* main.cpp in Sources */,
 				82FE6B6A14E7D6EF00C82F1F /* server.cpp in Sources */,
+				8268429C14F987E500FD5687 /* httpstaff.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
