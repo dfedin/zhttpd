@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8268429C14F987E500FD5687 /* httpstaff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8268429A14F987E500FD5687 /* httpstaff.cpp */; };
+		82571DFA14F9A5E800E28264 /* httpstaff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8268429A14F987E500FD5687 /* httpstaff.cpp */; };
 		82FE6B6A14E7D6EF00C82F1F /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82FE6B6914E7D6EF00C82F1F /* server.cpp */; };
 		8DD76F650486A84900D96B5E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.cpp */; settings = {ATTRIBUTES = (); }; };
 		8DD76F6A0486A84900D96B5E /* zhttpd.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* zhttpd.1 */; };
@@ -144,7 +144,7 @@
 			files = (
 				8DD76F650486A84900D96B5E /* main.cpp in Sources */,
 				82FE6B6A14E7D6EF00C82F1F /* server.cpp in Sources */,
-				8268429C14F987E500FD5687 /* httpstaff.cpp in Sources */,
+				82571DFA14F9A5E800E28264 /* httpstaff.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
