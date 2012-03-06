@@ -138,46 +138,48 @@ void TZHttp::ThreadFunc()
             int ident = evlist[i].data.fd;
 #endif
             if (ident  == ListenSocket) {
-                // It's the FD we ran listen() on, it must be an incomming connection
-                len = sizeof(sockaddr_in);
-                memset(&addr, 0, sizeof(struct sockaddr_in));
-
-                int socketfd =
+                while (true) {
+                    // It's the FD we ran listen() on, it must be an incomming connection
+                    len = sizeof(sockaddr_in);
+                    memset(&addr, 0, sizeof(struct sockaddr_in));
+                    int socketfd =
 #if !defined (__linux__)
-                    accept(ident, (struct sockaddr *)&addr, &len);
+                        accept(ident, (struct sockaddr *)&addr, &len);
 #else
-                    accept4(ident, (struct sockaddr *)&addr, &len, O_NONBLOCK);
+                        accept4(ident, (struct sockaddr *)&addr, &len, O_NONBLOCK);
 #endif
-                if (socketfd < 0) {
-                    // someone alreadu handle this
-                    if (errno == EAGAIN)
-                        continue;
-                    perror("accept");
-                    exit(-1);
-                }
+                    if (socketfd < 0) {
+                        // someone alreadu handle this
+                        if (errno == EAGAIN) {
+                            break;
+                        }
+                        perror("accept");
+                        exit(-1);
+                    }
 #ifdef VERBOSE_DEBUG
 #if !defined(__linux__)
-                printf("th:%lu: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa_r(addr.sin_addr, ntoa_buf, MAX_REQ_LEN), ntohs(addr.sin_port));
+                    printf("th:%lu: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa_r(addr.sin_addr, ntoa_buf, MAX_REQ_LEN), ntohs(addr.sin_port));
 #else
-                printf("th:%lu: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+                    printf("th:%lu: got connection from adderess %s:%d\n", pthread_self(), inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 #endif
 #endif
 #if defined(__darwin__) || defined(__FreeBSD__)
-                EV_SET(&chlist, socketfd, EVFILT_READ, EV_ADD|EV_CLEAR, 0, 0, 0);
-                if (kevent(kv, &chlist, 1, (struct kevent*)0, 0, (struct timespec*)0) < 0) {
-                    perror("kevent");
-                    exit(-1);
-                }
+                    EV_SET(&chlist, socketfd, EVFILT_READ, EV_ADD|EV_CLEAR, 0, 0, 0);
+                    if (kevent(kv, &chlist, 1, (struct kevent*)0, 0, (struct timespec*)0) < 0) {
+                        perror("kevent");
+                        exit(-1);
+                    }
 #endif
 #if defined (__linux__)
-                chlist.events = EPOLLIN | EPOLLET;
-                chlist.data.fd = socketfd;
-                if (epoll_ctl(ev, EPOLL_CTL_ADD, socketfd, &chlist) < 0) {
-                    perror("epoll_ctl");
-                    exit(-1);
-                }
+                    chlist.events = EPOLLIN | EPOLLET;
+                    chlist.data.fd = socketfd;
+                    if (epoll_ctl(ev, EPOLL_CTL_ADD, socketfd, &chlist) < 0) {
+                        perror("epoll_ctl");
+                        exit(-1);
+                    }
 #endif
-                nconn++;
+                    nconn++;
+                }
 #if defined(__darwin__) || defined(__FreeBSD__)
             } else if (evlist[i].flags & EV_EOF) {
 #endif
